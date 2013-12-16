@@ -1,5 +1,6 @@
 \documentclass{article}
 \usepackage{natbib}
+\usepackage{graphicx}
 
 \title{High-Performance Data Analysis on Janus using Apache Spark}
 \author{Nick Vanderweit \\
@@ -97,6 +98,23 @@ node and 32 TB of memory in the entire system. (REF)
     % karp flatt (graph)
 % cores grep test
     % scale up, workers per node (graph)
+    \begin{figure}[ht!]
+        \centering
+        \includegraphics[width=90mm]{images/workerPerNodeTimes.png}
+        \caption{Grep runtimes with different workers per node over 20GB file}
+        \label{fig:workNodeTime}
+    \end{figure}
+    \begin{figure}[ht!]
+        \centering
+        \includegraphics[width=90mm]{images/workerPerNodeSpeedup.png}
+        \caption{Grep speedup with different workers per node over 20GB file}
+    \end{figure}
+    \begin{figure}[ht!]
+        \centering
+        \includegraphics[width=90mm]{images/workerPerNodeEfficiency.png}
+        \caption{Grep efficiency with different workers per node over 20GB file}
+        \label{fig:workNodeEff}
+    \end{figure}
 % large grep test
     % serial run time (graph)
 % pagerank test 1
