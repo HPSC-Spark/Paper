@@ -11,6 +11,7 @@
 \maketitle
 
 \section{Introduction}
+<<<<<<< HEAD
 
 \section{Overview}
 
@@ -83,6 +84,30 @@ node and 32 TB of memory in the entire system. [REF]
 % workings and master comm of spark protocol
 
 \section{Conclusion}
+=======
+Over the past decade, there has been considerable interest in high-level
+strategies for evaluating algorithms in parallel over large data sets.
+Google's seminal MapReduce paper \citep{dean-mapreduce} describes such a
+general strategy, which had already been in use at Google at the time of
+publication, for building highly-scalable parallel applications out of small
+serial functions. In general, phrasing data parallelism in terms of
+higher-order functions on parallel data structures has proven fruitful
+for many applications. In this paper, we evaluate Spark, a library
+designed to address some of the shortcomings of MapReduce, on an existing
+supercomputer.
+
+In the MapReduce model, data is broken into \emph{splits} of a given size
+before processing. These are stored on a distributed filesystem as
+key/value pairs. The master node then distributes splits among the remaining
+workers. Each of these workers runs a \emph{Map} on its split, computing for each
+key/value pair $(k_1, v_1)$ another pair $(k_2, v_2)$. Each of these output
+pairs is stored on the filesystem and the master is informed of their
+locations.
+
+The master node proceeds by forwarding these intermediate pairs to the
+\emph{Reduce} workers, which are responsible for combining the results
+for each intermediate key.
+>>>>>>> dedd1248a39405d1256a425c6a69efcef7fef650
 
 \bibliography{paper}
 \bibliographystyle{plain}
