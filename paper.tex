@@ -23,16 +23,34 @@ designed to address some of the shortcomings of MapReduce, on an existing
 supercomputer.
 
 In the MapReduce model, data is broken into \emph{splits} of a given size
-before processing. These are stored on a distributed filesystem as
-key/value pairs. The master node then distributes splits among the remaining
-workers. Each of these workers runs a \emph{Map} on its split, computing for each
+before processing. These are stored on a distributed filesystem as key/value
+pairs. The master node then distributes splits among the remaining workers.
+Each of these workers runs a \emph{Map} on its split, computing for each
 key/value pair $(k_1, v_1)$ another pair $(k_2, v_2)$. Each of these output
 pairs is stored on the filesystem and the master is informed of their
-locations.
+locations. The master node proceeds by forwarding these intermediate pairs to the
+\emph{Reduce} workers, which are responsible for combining the results for each
+intermediate key.
 
-The master node proceeds by forwarding these intermediate pairs to the
-\emph{Reduce} workers, which are responsible for combining the results
-for each intermediate key.
+A commonly-used example for this process is a distributed word count. First,
+the input file (e.g. a large database dump containing posts on an Internet
+forum) is broken into splits of a given size (say 64MB). The splits store
+$(k, v)$ pairs such that each $v$ is a record (a post). The \emph{Map} task
+is responsible for mapping each record to a set of (word, count) pairs,
+which are written to the filesystem.
+
+The next step is for a \emph{Reduce} worker to sort these records by key
+and then sum together the values for each given key, and write out
+a set of (word, count) records where the keys are now unique.
+
+This simple example has interesting implications for MapReduce in general.
+We can see that \emph{Map} tasks are highly-parallel, but \emph{Reduce}
+introduces a serial bottleneck. In cases like parallel word count, where the
+\emph{Reduce} is associative and commutative (i.e. forms a commutative
+semigroup over the set of values), there is an additional opportunity for
+parallelism. As such, MapReduce provides an additional task, called a
+\emph{Combiner}, which assumes this structure and can be used to distill
+the intermediate $(k, v)$ pairs before a \emph{Reduce}.
 
 \section{Overview}
 
