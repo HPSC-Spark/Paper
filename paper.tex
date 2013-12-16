@@ -10,6 +10,80 @@
 \begin{document}
 \maketitle
 
+\section{Introduction}
+
+\section{Overview}
+
+\section{Evaluation}
+% janus
+    % overview
+%%% DIRECTLY COPY-PASTED TEXT %%%
+University of the University of Colorado's Top-
+31 (June 2010) supercomputer system, Janus
+    % specs (ref)
+%%% DIRECTLY COPY-PASTED TEXT %%%
+The final Janus computational
+system consists of 1,368 nodes, each containing two six-
+core Intel Xeon Westmere-EP chips at 2.8 GHz, for a total
+of 2,736 processors and 16,416 cores with a theoretical
+peak performance of 184 TFLOP/s. Each core has 2
+GB of 1333 MHz DDR3 RAM for a total of 24 GB per
+node and 32 TB of memory in the entire system. [REF]
+% spark
+    % reason for spark (diskless)
+    % installation (default???)
+    % version number (Spark 0.8.0, Scala 2.9.3)
+% purpose of trials (speedup, efficiency, install on Janus)
+    % find ideal configurations
+
+\subsection{Testing}
+% grep
+    % overview
+    % program source
+    % grep complexity
+    % file content
+    % files sizes
+    % node core counts
+    % serial runtime
+    % workers per node
+% page rank
+    % overview
+    % ...
+
+\subsection{Results}
+% small grep test
+    % serial run time (graph)
+    % efficiency (graph)
+    % karp flatt (graph)
+% cores grep test
+    % scale up, workers per node (graph)
+% large grep test
+    % serial run time (graph)
+    % efficiency (graph)
+% pagerank test 1
+% pagerank test 2
+% ...
+
+\section{Discussion}
+% small grep test
+    % ideal balance between speedup and efficiency
+% cores grep test
+    % ideal number of workers per core
+    % close enough not to matter
+    % don't use 6-12
+% large grep test
+    % ideal workers per problem size
+    % follow up test with delay
+    % delay (graph)
+    % take away on IO
+% pagerank test 1
+% pagerank test 2
+% ...
+
+% workings and master comm of spark protocol
+
+\section{Conclusion}
+
 \bibliography{paper}
 \bibliographystyle{plain}
 
