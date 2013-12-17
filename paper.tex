@@ -38,8 +38,8 @@ A commonly-used example for this process is a distributed word count. First,
 the input file (e.g. a large database dump containing posts on an Internet
 forum) is broken into splits of a given size (say 64MB). The splits store
 $(k, v)$ pairs such that each $v$ is a record (a post). The \emph{Map} task
-is responsible for mapping each record to a set of (word, count) pairs,
-which are written to the filesystem.
+is responsible for mapping each record to a set of $(\mbox{word}, \mbox{count})$
+pairs, which are written to the filesystem.
 
 The next step is for a \emph{Reduce} worker to sort these records by key
 and then sum together the values for each given key, and write out
