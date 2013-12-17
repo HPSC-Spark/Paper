@@ -52,6 +52,24 @@ parallelism. As such, MapReduce provides an additional task, called a
 \emph{Combiner}, which assumes this structure and can be used to distill
 the intermediate $(k, v)$ pairs before a \emph{Reduce}.
 
+We can also see from this example a significant limitation of MapReduce: each
+intermediate $(k, v)$ set is written to the distributed filesystem.  As such,
+in order for MapReduce to be efficient, the individual tasks must be very
+large.
+
+However, some algorithms are not well-described by a simple map-and-then-reduce
+pattern, and require multiple iterations.  If each iteration is small, the
+algorithm's performance will be bottlenecked by this file I/O. For these
+problems, another approach is needed.
+
+Spark was designed at the UC Berkeley AMPLab to address these concerns using a
+more flexible abstraction for distributed data \citep{zaharia}. Rather than
+assuming that all intermediate data is stored on a filesystem, Spark uses
+\emph{Resilient Distributed Datasets}, or RDDs, to represent data that is
+stored on disk, cached in memory, or possibly has not been computed yet at all
+\citep{zaharia_rdd}.  It is primarily targeted toward Scala, a statically-typed
+functional language for the Java Virtual Machine.
+
 \section{Overview}
 
 \section{Evaluation}
