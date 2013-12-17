@@ -1,6 +1,7 @@
 \documentclass{article}
 \usepackage{natbib}
 \usepackage{graphicx}
+\usepackage{float}
 
 \title{High-Performance Data Analysis on Janus using Apache Spark}
 \author{Nick Vanderweit \\
@@ -76,6 +77,7 @@ functional language for the Java Virtual Machine.
 \section{Evaluation}
 % janus
     % overview
+    % describe what spark test where
 %%% DIRECTLY COPY-PASTED TEXT %%%
 University of the University of Colorado's Top-
 31 (June 2010) supercomputer system, Janus
@@ -110,31 +112,42 @@ node and 32 TB of memory in the entire system. (REF)
     % ...
 
 \subsection{Results}
-% small grep test
-    % serial run time (graph)
-    % efficiency (graph)
-    % karp flatt (graph)
 % cores grep test
     % scale up, workers per node (graph)
-    \begin{figure}[ht!]
+    \begin{figure}[H]
         \centering
         \includegraphics[width=90mm]{images/workerPerNodeTimes.png}
         \caption{Grep runtimes with different workers per node over 20GB file}
         \label{fig:workNodeTime}
     \end{figure}
-    \begin{figure}[ht!]
+    \begin{figure}[H]
         \centering
         \includegraphics[width=90mm]{images/workerPerNodeSpeedup.png}
         \caption{Grep speedup with different workers per node over 20GB file}
     \end{figure}
-    \begin{figure}[ht!]
+    \begin{figure}[H]
         \centering
         \includegraphics[width=90mm]{images/workerPerNodeEfficiency.png}
         \caption{Grep efficiency with different workers per node over 20GB file}
         \label{fig:workNodeEff}
     \end{figure}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=90mm]{images/workerPerNodeKarpFlatt.png}
+        \caption{Grep Karp-Flatt metric with different workers per node over
+                20GB file}
+        \label{fig:workNodeKF}
+    \end{figure}
+        % stays relative constant, serial is the issue
 % large grep test
     % serial run time (graph)
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=90mm]{images/bigDataTimes.png}
+        \caption{Average grep runtimes over 100GB file}
+        \label{fig:bigTime}
+        % stays relative constant, serial is the issue
+    \end{figure}
 % pagerank test 1
 % pagerank test 2
 % ...
@@ -149,7 +162,6 @@ node and 32 TB of memory in the entire system. (REF)
 % large grep test
     % ideal workers per problem size
     % follow up test with delay
-    % delay (graph)
     % take away on IO
 % pagerank test 1
 % pagerank test 2
