@@ -2,6 +2,7 @@
 \usepackage{natbib}
 \usepackage{graphicx}
 \usepackage{float}
+\usepackage{listings}
 
 \title{High-Performance Data Analysis on Janus using Apache Spark}
 \author{Nick Vanderweit \\
@@ -73,6 +74,45 @@ stored on disk, cached in memory, or possibly has not been computed yet at all
 functional language for the Java Virtual Machine.
 
 \section{Overview}
+One of the key insights of Spark is that reducing the strictness of a
+computation can offer large gains in performance. This lies at the heart
+of the notion of RDDs: it is often more efficient to represent a \emph{recipe}
+for a result than to represent the result itself, especially when the data sets
+are arbitrarily large. Some programmers may be familiar with the related
+notion of a \emph{thunk} in functional programming.
+
+To demonstrate this idea, consider the following code snippet in a
+functional language like ML:
+
+\begin{lstlisting}[language=ML]
+let rdd = ...
+let mapped = map (fun x -> x * 2) rdd
+let filtered = filter (fun x -> x mod 4 == 2) mapped
+let sum = List.fold_left (fun x y -> x + y) 0 filtered
+...
+\end{lstlisting}
+
+In the MapReduce model, there would be a strict filesystem write after each of
+these lines.  Spark does not impose such a restriction, and allows the data to
+persist in memory between operations. In fact, it even goes a step beyond this.
+By default, RDDs are stored lazily as chains of computations that would
+produce an output value. This has several advantages: for one, it is much
+more practical to recover failed nodes with such a recipe in hand. Also,
+storing computations as a lazy data structure permits certain optimizations.
+For instance, the above example contains a \texttt{map} composed with a
+\texttt{filter}. If this computation is expressed as a data structure,
+the Spark environment can dynamically optimize it to:
+
+\begin{lstlisting}[language=ML]
+let rdd = ...
+let filtered = filter (fun x -> (x * 2) mod 4 == 2) mapped
+let sum = List.fold_left (fun x y -> x + y) 0 filtered
+...
+\end{lstlisting}
+
+This kind of optimization is known as \emph{deforestation}, the elimination
+of intermediate data structures, and is used to greatly improve data
+locality \citep{wadler}.
 
 \section{Evaluation}
 We conducted our evaluation of the Spark framework on the University of
