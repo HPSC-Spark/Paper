@@ -166,7 +166,7 @@ Ten trials were performed for each test, allows us to compute average
 runtimes. To compute the speedup, Spark runtimes were compared to the UNIX grep
 command's serial runtime on the same file. Finally, during our first test on the
 20 GB file, we evaluated performance using a different number of workers per
-node. In Spark, a worker is an executor with it's own JVM which processes it's
+node. In Spark, a worker is an executor with its own JVM which processes its
 own portion of the distributed data set. By default, a single worker is
 employed on each node. For this test, we wanted to see if this was the ideal
 setting for running Spark on JANUS.
@@ -252,8 +252,6 @@ compared to the file load time, we began running our tests on the more
 computationally expensive PageRank algorithm. We ran five tests in total,
 measuring the amount of wall clock time each took to compute.
 
-We have tested the scalability of Spark system on distributed Grep program and we still want to see whether for iterative algorithms, it's also scalable by looking at the time as the number of nodes increases.\\
-
     \begin{figure}[H]
         \centering
         \includegraphics[width=90mm]{images/scalability.png}
@@ -311,7 +309,18 @@ the performance degrades as we restrict the amount of heap space.
         \label{fig:insuff-mem}
     \end{figure}
 
-We test Bagel Pagerank on Dataset with 64,000 pages and 30 million links in total on four nodes in JANUS. As we limit the memory size from 1gb to 18gb in each node, the time is recorded. As shown in the Figure \ref{fig:insuff-mem}, the time stays stable when the memory limit is over 6gb since the program won’t use disk for RDD data storage. Once the memory limit is less than the memory required, the performance drops until it fails on one-node cluster, where the java heap exceeds the limit. Despite the performance degradation, it’s quite linear. Besides, the dataset size is 4.2gb and it consumes around 8.8gb memory per node, which is 35gb memory in total. one of the reasons is that Spark system designs the RDD to be immutable and every time a RDD is transformed, a new RDD is created, thus taking up lots of memory. The other reason is that Spark replicates the RDD on the go for loss of data.\\
+For comparison, we tested a Bagel implementation of PageRank on a dataset with
+64,000 pages and 30 million links in total on four nodes in Janus. As we limit
+the memory size from 1GB to 18GB in each node, the time is recorded. As shown
+in the Figure \ref{fig:insuff-mem}, the time stays stable when the memory limit
+is over 6GB since the program won’t use disk for RDD data storage. Once the
+memory limit is less than the memory required, the performance drops until it
+fails on one-node cluster, where the Java heap allocation is exceeded. Despite
+the performance degradation, it's quite linear. Besides, the dataset size is
+4.2GB and it consumes around 8.8GB memory per node, which is 35GB of memory in
+total. One of the reasons is that RDDs are immutable and every time a RDD is
+transformed, a new RDD is created, thus taking up lots of memory. The other
+reason is that Spark replicates the RDD on the go for loss of data.
 
 \begin{figure}[H]
         \centering
