@@ -287,12 +287,14 @@ to determine a possible solution or workaround.
 \section{Conclusion}
 We found that, while Spark offers an appealing abstraction layer for
 data-parallel programming, achieving reasonable scalability even on trivial
-problems is still very difficult. Without adequate profiling tools, we found
-ourselves puzzled by the lackluster results of our experiments. With more time,
-we could probably use the Spark logs to better understand where our serial
-bottlenecks are and increase efficiency. It may very well still be worth
-exploring how Spark could be used on JANUS, but it may require rethinking
-how we are using the network and filesystems for this task.
+problems is still very difficult. Any abstraction for parallelism would
+seemingly run into this problem: when speedups are not as expected, it is often
+much harder to track down the source of the problem.  The lack of adequate
+profiling tools made the lackluster results of our experiments all the more
+puzzling. With more time, we could probably use the Spark logs to better
+understand where our serial bottlenecks are and increase efficiency. It may
+very well still be worth exploring how Spark could be used on JANUS, but it may
+require rethinking how we are using the network and filesystems for this task.
 
 \bibliography{paper}
 \bibliographystyle{plain}
