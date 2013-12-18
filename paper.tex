@@ -3,6 +3,7 @@
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{listings}
+\usepackage{url}
 
 \title{High-Performance Data Analysis on JANUS using Apache Spark}
 \author{Nick Vanderweit \\
@@ -237,9 +238,7 @@ To see if we could observe better scaling, we ran the same grep test over a
 starting with 5 and going to 50 nodes. Figure \ref{fig:bigTime} shows the
 runtimes observed over this large problem.  Clearly there appears to be no
 change in runtimes, as the runtimes hover around 500 seconds, regardless of the
-number of nodes used. Suspecting the short computational time of the grep
-search was negligible as compared to the file load time, we began running our
-tests on the more computationally expensive PageRank algorithm.
+number of nodes used.
 
     \begin{figure}[H]
         \centering
@@ -248,13 +247,19 @@ tests on the more computationally expensive PageRank algorithm.
         \label{fig:bigTime}
     \end{figure}
 
-Now we run five tests for pagerank program.\\
+Suspecting the short computational time of the grep search was negligible as
+compared to the file load time, we began running our tests on the more
+computationally expensive PageRank algorithm. We ran five tests in total,
+measuring the amount of wall clock time each took to compute.
 
-We have tested the scalability of Spark system on distributed Grep program and we still want to see whether for iterative algorithms, it's also scalable by looking at the time as the number of nodes increases.\\
-
-
-We test Bagel Pagerank on Dataset of five million links, 5 million links, 30 million links and 50 million links and on number of nodes from 4 to 16 with increment of two. As shown in Figure \ref{fig:scalability}, for scalability test, the larger the dataset is, the better the scalability is because the ratio of computation to communication is large. The reason we ran on a small dataset is a akka failure with a message of “Remote akka client shutdown”. We tried to solve the error by modifying the message size and timeout for the akka client but the error still pops up.\\
-
+We tested a Bagel implementation of PageRank on several of 5 million links, 30
+million links, and 50 million links. We ran these computations on allocations
+ranging from 4 to 16 nodes, incrementing by two.  As shown in Figure
+\ref{fig:scalability}, for the scalability test, the larger the dataset is, the
+better the scalability is because the ratio of computation to communication is
+large. We had to run on a small dataset because of a technical problem with our
+Spark installation.\footnote{
+\url{https://groups.google.com/forum/#!topic/spark-users/-nsoF7oonOM}}
 
 \begin{figure}[H]
         \centering
