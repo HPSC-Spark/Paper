@@ -191,49 +191,59 @@ dataset \citep{[??]} , this contains internal links between the DBPedia
 instances extracted from the internal links of the Wikipedia articles making it
 apt for the any datamining related analysis including PageRank algorithm.
 Therefore this dataset was chosen for the experiment.  The overall size of this
-dataset is 25GB.  The format of the data is of the form: \\
+dataset is 25GB.  The format of the data is of the form:
 
-\centering
+\begin{center}
 \{ source url \} \{ some configuration \} \{ dest url \} \\
+\end{center}
 
-For the PageRank algorithm, only the source url and the dest url is
-needed. Therefore the dataset was was preprocessed to filter out only the
-necessary information.  If the entire dataset is assumed to be represented by a
-huge graph, then here each DBPedia instance maps to a Wikipedia article or a
-page which inturn could be mapped to a vertex of the graph. The links
-between the instances could then be mapped to edges of the graph.
+For the PageRank algorithm, only the source url and the dest url is needed.
+Therefore the dataset was was preprocessed to filter out only the necessary
+information.  If the entire dataset is assumed to be represented by a huge
+graph, then here each DBPedia instance maps to a Wikipedia article or a page
+which inturn could be mapped to a vertex of the graph. The links between the
+instances could then be mapped to edges of the graph.
 
-\begin{figure}
+\begin{figure}[H]
 \centering
   \includegraphics[width=80mm]{images/numVertices.png}
   \caption{The vertices count over various dataset size}
   \label{fig:numvertices}
 \end{figure}
 
-\begin{figure} 
+\begin{figure}[H]
   \centering
   \includegraphics[width=80mm]{images/numLinks.png}
   \caption{The average edge count per vertex for various dataset size}
   \label{fig:numlinks}
 \end{figure}
 
-The figure \ref{fig:numvertices} shows the variation in the no of vertices count for different dataset size which from ~40,000 nodes and the figure \ref{fig:numlinks} shows  the average number of links or edges per vertex for a smaller dataset is much higher as compared to the larger dataset. The smaller dataset are the first few DBPedia instances of the larger dataset. The first few pages probably have more links compared the pages in the end of the dataset and hence the average is linearly decreasing.
-
+The figure \ref{fig:numvertices} shows the variation in the vertex count for
+different dataset sizes which range from approximately 40,000 nodes and the
+figure \ref{fig:numlinks} shows the average number of links or edges per vertex
+for a smaller dataset is much higher as compared to the larger dataset. The
+smaller dataset are the first few DBPedia instances of the larger dataset. The
+first few pages probably have more links compared the pages in the end of the
+dataset and hence the average is linearly decreasing.
 
 \emph{Algorithm:}
-The basic idea of the page rank algorithm is to assign scores to the pages based on the following two aspects of the page.
-	\begin{enumerate}
-		\item {\centering pages with higher incoming links get high rank.}
-		 \item {\centering pages with links from a high rank page also gets high rank.}
-	\end{enumerate}
+The basic idea of the page rank algorithm is to assign scores to the pages
+based on the following two aspects of the page.
+
+\begin{enumerate}
+    \item {\centering pages with higher incoming links get high rank.}
+    \item {\centering pages with links from a high rank page also gets high
+        rank.}
+\end{enumerate}
 
 The pseudocode of the algorithm is as follows:
 \begin{enumerate}
-	\item {\centering Assign every page a rank of 1.}
-	\item {\centering On each iteration have page p contribute to rankp/ |neighbours|p to its neighbors.}
-	\item {\centering Set each page ranks to \(0.15 + 0.85  *  contributions\)}.
-	\end{enumerate}   
-	
+    \item {\centering Assign every page a rank of 1.}
+    \item {\centering On each iteration have page p contribute to $rankp/
+        |neighbours|p$ to its neighbors.}
+    \item {\centering Set each page ranks to \(0.15 + 0.85  *  contributions\)}.
+\end{enumerate}   
+    
 The scala implementation of this algorithm is as shown below:
 \begin{lstlisting}[language=ML]
 vallinks =// RDD of (url, neighbors) pairs
