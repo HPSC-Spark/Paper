@@ -152,7 +152,7 @@ Following the example from Google's first paper on MapReduce, the first test we
 performed was a parallel grep \citep{dean-mapreduce}. Here an application would
 scan through a large test file, looking for lines that matched a given regular
 expression, finally returning the total number of matched lines. Two series of
-tests were run on two different files sizes. During these tests, we wanted to
+tests were run on two different file sizes. During these tests, we wanted to
 see how Spark scales in an ideal setting, where the entire data set fit in
 memory. This way we avoid the large performance hit Spark takes writing
 intermediate results to disk. Given that each node has a total of 24 GB of RAM,
@@ -416,7 +416,7 @@ number of nodes from 4 to 16 with increment 2 and a dataset with 64,000 pages an
 outperforms simple version a little bit. The main reason is that for a smaller
 dataset, the overhead of managing vertices, edges and messages are so huge that
 the benefits of asynchronous background messages that Spark might offer is not
-that obvious. We couldn’t test on big dataset because of the aforementioned
+that obvious. We couldn't test on a big dataset because of the aforementioned
 technical failure. However, it's worth noting that programming is easier with
 general concepts of vertices, edges and messages to represent the graph.
 
