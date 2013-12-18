@@ -1,0 +1,11 @@
+nodes=c('04','06','08','10','12','14','16','04','06','08','10','12','14','16','04','06','08','10','12','14','16')
+dataset=c('05m','05m','05m','05m','05m','05m','05m','30m','30m','30m','30m','30m','30m','30m','50m','50m','50m','50m','50m','50m','50m')
+speedup=c(1,2,3,4,5,6,7,288.755,211.515,760.85,145.675,608.245,188.255,208.47,718.12,854.34,507.305,444.59,1,2,3)
+avgData=tapply(speedup,list(nodes,dataset),mean)
+avgData=cbind(c(4,6,8,10,12,14,16),avgData)
+avgData=data.frame(avgData)
+colnames(avgData)=c("NODES","05m","30m","50m")
+avgData=melt(avgData,id=1)
+colnames(avgData)=c("NODES","DATA","SPEEDUP")
+ggplot(avgData,aes(x=NODES,y=SPEEDUP,color=DATA))+geom_line(size=1.5)+ylab("Speedup")
+
