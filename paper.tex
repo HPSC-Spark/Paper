@@ -252,6 +252,12 @@ Now we run five tests for pagerank program.\\
 
 We have tested the scalability of Spark system on distributed Grep program and we still want to see whether for iterative algorithms, it's also scalable by looking at the time as the number of nodes increases.\\
 
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=90mm]{images/scalability.png}
+        \caption{Scalability Test for Pagerank}
+        \label{fig:bscalability}
+    \end{figure}
 
 We test Bagel Pagerank on Dataset of five million links, 5 million links, 30 million links and 50 million links and on number of nodes from 4 to 16 with increment of two. As shown in Figure \ref{fig:scalability}, for scalability test, the larger the dataset is, the better the scalability is because the ratio of computation to communication is large. The reason we ran on a small dataset is a akka failure with a message of “Remote akka client shutdown”. We tried to solve the error by modifying the message size and timeout for the akka client but the error still pops up.\\
 
