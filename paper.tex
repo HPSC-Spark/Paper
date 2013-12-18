@@ -283,7 +283,7 @@ Spark stores the whole dataset in memory in avoidance of disk IO but when the me
         \label{fig:insuff-mem}
     \end{figure}
 
-We test Bagel Pagerank on Dataset with 64,000 pages and 30 million links in total on four nodes in Janus. As we limit the memory size from 1gb to 18gb in each node, the time is recorded. As shown in the Figure \ref{fig:insuff-mem}, the time stays stable when the memory limit is over 6gb since the program won’t use disk for RDD data storage. Once the memory limit is less than the memory required, the performance drops until it fails on one-node cluster, where the java heap exceeds the limit. Despite the performance degradation, it’s quite linear. Besides, the dataset size is 4.2gb and it consumes around 8.8gb memory per node, which is 35gb memory in total. one of the reasons is that Spark system designs the RDD to be immutable and every time a RDD is transformed, a new RDD is created, thus taking up lots of memory. The other reason is that Spark replicates the RDD on the go for loss of data.\\
+We test Bagel Pagerank on Dataset with 64,000 pages and 30 million links in total on four nodes in JANUS. As we limit the memory size from 1gb to 18gb in each node, the time is recorded. As shown in the Figure \ref{fig:insuff-mem}, the time stays stable when the memory limit is over 6gb since the program won’t use disk for RDD data storage. Once the memory limit is less than the memory required, the performance drops until it fails on one-node cluster, where the java heap exceeds the limit. Despite the performance degradation, it’s quite linear. Besides, the dataset size is 4.2gb and it consumes around 8.8gb memory per node, which is 35gb memory in total. one of the reasons is that Spark system designs the RDD to be immutable and every time a RDD is transformed, a new RDD is created, thus taking up lots of memory. The other reason is that Spark replicates the RDD on the go for loss of data.\\
 
 \begin{figure}[H]
         \centering
@@ -334,10 +334,25 @@ lack of Spark logging and profiling tools makes it difficult to determine
 exactly how long each stage is taking. Further investigation would be needed
 to determine a possible solution or workaround.
 
-To sum up, Spark, with its in memory data store, performs great on iterative algorithms and degrade linearly with insufficient memory. With partitioner, the dataset is uniformly distributed across the nodes in avoidance of possible stranglers. For scalability test, the time increasing with the number of nodes is due to the overhead of communication for small dataset. we believe that solving the akka error to enable the program to run on big dataset like 25gb will show great scalability for number of nodes under ten. 
+To sum up, Spark, with its in memory data store, performs great on iterative
+algorithms and degrade linearly with insufficient memory. Using a partitioner,
+the dataset is uniformly distributed across the nodes to avoidance of possible
+stragglers. For the scalability test, the time increase with the number of nodes
+is due to the communication overhead for the small dataset. We believe that
+solving the akka error would enable the program to run on larger datasets, and
+show great scalability nodes counts of 10 and under. 
 
-The biggest problem we had in the project is the akka failure, which occurs when we ran a big dataset on a small number of nodes. This prevented us from increasing the ratio of computing to communication for scalability test. Second, since there is the time limit for a cluster of nodes we allocate, we have to stop the test in the middle and reallocate nodes, which shows inconsistent time metric. It might be that the nodes we reallocate have different network topology with congested network in Janus. Third, although we ran each test with three repetitions, we saw significant difference in time with exact the same configuration. We simply discard the one that is very unlikely compared with the other two.
-
+The biggest problem we had throughout these tests was the akka failure. This
+occurs when we ran large dataset on a small number of nodes. This prevented us
+from increasing the ratio of computing to communication for scalability test.
+Secondly, due to the time limit for a cluster of allocated nodes on JANUS, we
+have to stop in the middle of testing and reallocate nodes. This often
+reflected in inconsistent results. It might be that the nodes we reallocate
+have different network topology with network congestion. Finally, although we
+ran three trials for each test, we saw a significant difference in time,
+despite running with the same exact configuration. To help address this issue,
+we simply discarded any result that appeared to be an outlier as compared to
+the other two results.
 
 % pagerank test 1
 % pagerank test 2
