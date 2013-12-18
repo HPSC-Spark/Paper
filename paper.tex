@@ -248,6 +248,61 @@ tests on the more computationally expensive PageRank algorithm.
         \label{fig:bigTime}
     \end{figure}
 
+Now we run five tests for pagerank program.\\
+
+We have tested the scalability of Spark system on distributed Grep program and we still want to see whether for iterative algorithms, it’s also scalable by looking at the time as the number of nodes increases.\\
+
+
+We test Bagel Pagerank on Dataset of five million links, 5 million links, 30 million links and 50 million links and on number of nodes from 4 to 16 with increment of two. As shown in Figure \ref{fig:scalability}, for scalability test, the larger the dataset is, the better the scalability is because the ratio of computation to communication is large. The reason we ran on a small dataset is a akka failure with a message of “Remote akka client shutdown”. We tried to solve the error by modifying the message size and timeout for the akka client but the error still pops up.\\
+
+
+\begin{figure}[H]
+        \centering
+        \includegraphics[width=90mm]{images/in-mem.png}
+        \caption{In-Memory RDD for iterative algorithms}
+        \label{fig:in-memory}
+    \end{figure}
+
+The main motivation to design Spark is Resilient Distributed Dataset, which resides in memory and stays in memory over the iterations, while Hadoop incurs lots of disk IO because it materializes data like the map output in disk before the data is shuffled. This test is to check whether the time for later iterations is less compared with that in the first iteration.\\
+
+
+We test Simple Pagerank on Dataset with 1.4 million pages and 50 million links in total on 8 nodes and 12 nodes. At the same time, we make sure the data will fit in memory. After that, we set the number of iterations to be 11 and during the first iteration, the program needs to load the data from the disk and then process the data. As shown in Figure \ref{fig:in-memory} for both the 8-node cluster and 12-node cluster, the time spent on the first iteration is much higher than all the latter iterations. One thing to note is that the time for 12-node cluster is always higher than 8-node cluster because the dataset is small and the performance gain from distributing the work is less than the communication overhead incurred with more nodes. In sum, in-memory dataset does improve the performance for iterative algorithms.\\
+
+Spark stores the whole dataset in memory in avoidance of disk IO but when the memory is sufficient, there’s no way to avoid disk IO. Spark has its algorithm to swap the least used data to disk and keeps the most used in memory. This test is to find whether the performance degrades linearly as the memory amount decreases.\\
+
+
+\begin{figure}[H]
+        \centering
+        \includegraphics[width=90mm]{images/insufficient_memory.png}
+        \caption{Insufficient memory test}
+        \label{fig:insuff-mem}
+    \end{figure}
+
+We test Bagel Pagerank on Dataset with 64,000 pages and 30 million links in total on four nodes in Janus. As we limit the memory size from 1gb to 18gb in each node, the time is recorded. As shown in the Figure \ref{fig:insuff-mem}, the time stays stable when the memory limit is over 6gb since the program won’t use disk for RDD data storage. Once the memory limit is less than the memory required, the performance drops until it fails on one-node cluster, where the java heap exceeds the limit. Despite the performance degradation, it’s quite linear. Besides, the dataset size is 4.2gb and it consumes around 8.8gb memory per node, which is 35gb memory in total. one of the reasons is that Spark system designs the RDD to be immutable and every time a RDD is transformed, a new RDD is created, thus taking up lots of memory. The other reason is that Spark replicates the RDD on the go for loss of data.\\
+
+\begin{figure}[H]
+        \centering
+        \includegraphics[width=90mm]{images/bagelsimple.png}
+        \caption{Bagel VS. Simple PageRank}
+        \label{fig:bagelsimple}
+    \end{figure}
+
+Google has Pregel for distributed graph algorithms and Spark also has its own version of Pregel called Bagel for graph processing. This test is to check whether the bagel version of pagerank outperforms simple version in terms of time.\\
+
+We ran both Bagel version and Simple version of PageRank on number of nodes from 4 to 16 with increment 2 and Dataset with 64,000 pages and 30 million links in total with sufficient memory. In Figure \ref{fig:bagelsimple} regardless of time, we can see that bagel version outperforms simple version a little bit. The main reason is that for smaller dataset, the overhead of managing vertices, edges and messages are so huge that the benefits of asynchronous background messages that Spark might offer is not that obvious. We couldn’t test on big dataset because of akka failure. However, it’s worth noting that programming is easier with general concepts of vertices, edges and messages to represent the graph.\\
+
+\begin{figure}[H]
+        \centering
+        \includegraphics[width=90mm]{images/skew.png}
+        \caption{Data Skew Test}
+        \label{fig:dataskew}
+    \end{figure}
+
+At last, we will focus on potential data skew problem, which exists in systems like Hadoop. Since with data skew, the strangler could slow down the whole program considerably.\\
+
+We ran Bagel version of PageRank on four nodes and on dataset of 30 million links. As shown in Figure \ref{fig:dataskew}, the memory used is quite balanced across the nodes. We checked the data size read from the disk and found that all the nodes are reading the exact same amount of data from the disk. So the little imbalance came from the RDDs created later, which is partitioned by a certain key. \\
+
+
 % pagerank test 1
 % pagerank test 2
 % ...
@@ -273,6 +328,11 @@ Spark could be reading this file serially from the lustre file system. The
 lack of Spark logging and profiling tools makes it difficult to determine
 exactly how long each stage is taking. Further investigation would be needed
 to determine a possible solution or workaround.
+
+To sum up, Spark, with its in memory data store, performs great on iterative algorithms and degrade linearly with insufficient memory. With partitioner, the dataset is uniformly distributed across the nodes in avoidance of possible stranglers. For scalability test, the time increasing with the number of nodes is due to the overhead of communication for small dataset. we believe that solving the akka error to enable the program to run on big dataset like 25gb will show great scalability for number of nodes under ten. 
+
+The biggest problem we had in the project is the akka failure, which occurs when we ran a big dataset on a small number of nodes. This prevented us from increasing the ratio of computing to communication for scalability test. Second, since there is the time limit for a cluster of nodes we allocate, we have to stop the test in the middle and reallocate nodes, which shows inconsistent time metric. It might be that the nodes we reallocate have different network topology with congested network in Janus. Third, although we ran each test with three repetitions, we saw significant difference in time with exact the same configuration. We simply discard the one that is very unlikely compared with the other two.
+
 
 % pagerank test 1
 % pagerank test 2
