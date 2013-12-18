@@ -297,7 +297,7 @@ performance for iterative algorithms.
 
 Spark often stores the whole dataset in memory in order to avoid disk I/O.
 However, when there is not sufficient memory to do this, disk I/O is
-unavoidable.  As such, Spark has an algorithm algorithm to swap the least-used
+unavoidable.  As such, Spark has an algorithm to swap the least-used
 data to disk and keeps the most-used in memory. This test is to find how
 the performance degrades as we restrict the amount of heap space.
 
@@ -329,9 +329,17 @@ reason is that Spark replicates the RDD on the go for loss of data.
         \label{fig:bagelsimple}
     \end{figure}
 
-Google has Pregel for distributed graph algorithms and Spark also has its own version of Pregel called Bagel for graph processing. This test is to check whether the bagel version of pagerank outperforms simple version in terms of time.\\
-
-We ran both Bagel version and Simple version of PageRank on number of nodes from 4 to 16 with increment 2 and Dataset with 64,000 pages and 30 million links in total with sufficient memory. In Figure \ref{fig:bagelsimple} regardless of time, we can see that bagel version outperforms simple version a little bit. The main reason is that for smaller dataset, the overhead of managing vertices, edges and messages are so huge that the benefits of asynchronous background messages that Spark might offer is not that obvious. We couldn’t test on big dataset because of akka failure. However, it’s worth noting that programming is easier with general concepts of vertices, edges and messages to represent the graph.\\
+In order to measure the relative performance of the Bagel and simple
+implementations, we ran both versions of PageRank on
+number of nodes from 4 to 16 with increment 2 and a dataset with 64,000 pages and
+30 million links in total with sufficient memory. In Figure
+\ref{fig:bagelsimple} regardless of time, we can see that bagel version
+outperforms simple version a little bit. The main reason is that for a smaller
+dataset, the overhead of managing vertices, edges and messages are so huge that
+the benefits of asynchronous background messages that Spark might offer is not
+that obvious. We couldn’t test on big dataset because of the aforementioned
+technical failure. However, it's worth noting that programming is easier with
+general concepts of vertices, edges and messages to represent the graph.
 
 \begin{figure}[H]
         \centering
@@ -340,9 +348,16 @@ We ran both Bagel version and Simple version of PageRank on number of nodes from
         \label{fig:dataskew}
     \end{figure}
 
-At last, we will focus on potential data skew problem, which exists in systems like Hadoop. Since with data skew, the strangler could slow down the whole program considerably.\\
+Finally, we will focus on the potential data skew problem, which exists in systems
+like Hadoop. Since with data skew, a single straggler could slow down the whole
+program considerably.
 
-We ran Bagel version of PageRank on four nodes and on dataset of 30 million links. As shown in Figure \ref{fig:dataskew}, the memory used is quite balanced across the nodes. We checked the data size read from the disk and found that all the nodes are reading the exact same amount of data from the disk. So the little imbalance came from the RDDs created later, which is partitioned by a certain key. \\
+We ran our Bagel version of PageRank on four nodes and on dataset of 30 million
+links. As shown in Figure \ref{fig:dataskew}, the memory used is quite balanced
+across the nodes. We checked the data size read from the disk and found that
+all the nodes are reading the exact same amount of data from the disk. So the
+little imbalance came from the RDDs created later, which is partitioned by a
+certain key.
 
 
 % pagerank test 1
