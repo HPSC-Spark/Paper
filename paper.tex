@@ -32,9 +32,9 @@ pairs. The master node then distributes splits among the remaining workers.
 Each of these workers runs a \emph{Map} on its split, computing for each
 key/value pair $(k_1, v_1)$ another pair $(k_2, v_2)$. Each of these output
 pairs is stored on the filesystem and the master is informed of their
-locations. The master node proceeds by forwarding these intermediate pairs to the
-\emph{Reduce} workers, which are responsible for combining the results for each
-intermediate key.
+locations. The master node proceeds by forwarding these intermediate pairs to
+the \emph{Reduce} workers, which are responsible for combining the results for
+each intermediate key.
 
 A commonly-used example for this process is a distributed word count. First,
 the input file (e.g. a large database dump containing posts on an Internet
@@ -197,12 +197,12 @@ dataset is 25GB.  The format of the data is of the form:
 \{ source url \} \{ some configuration \} \{ dest url \} \\
 \end{center}
 
-For the PageRank algorithm, only the source url and the dest url is needed.
-Therefore the dataset was was preprocessed to filter out only the necessary
-information.  If the entire dataset is assumed to be represented by a huge
-graph, then here each DBPedia instance maps to a Wikipedia article or a page
-which inturn could be mapped to a vertex of the graph. The links between the
-instances could then be mapped to edges of the graph.
+For the PageRank algorithm, only the \emph{source url} and the \emph{dest url}
+is needed.  Therefore the dataset was was preprocessed to filter out only the
+necessary information.  If the entire dataset is assumed to be represented by a
+huge graph, then here each DBPedia instance maps to a Wikipedia article or a
+page which in turn could be mapped to a vertex of the graph. The links between
+the instances could then be mapped to edges of the graph.
 
 \begin{figure}[H]
 \centering
@@ -244,7 +244,7 @@ The pseudocode of the algorithm is as follows:
     \item {\centering Set each page ranks to \(0.15 + 0.85  *  contributions\)}.
 \end{enumerate}   
     
-The scala implementation of this algorithm is as shown below:
+The Scala implementation of this algorithm is as shown below:
 \begin{lstlisting}[language=ML]
 vallinks =// RDD of (url, neighbors) pairs
 varranks =// RDD of (url, rank) pairs
@@ -261,19 +261,44 @@ ranks.saveAsTextFile(...)
 \end{lstlisting}	
      
 \emph{Bagel}:
-The Bagel programming model was developed by spark.This is the implementation of the graph processing framework developed by google called the \emph{Pregel} system[??]. Bagel is still in the development stage where in more features are being added to the basic graph computation framework.
+The Bagel programming model was developed by Spark. This is the implementation
+of the graph processing framework developed by Google called the \emph{Pregel}
+system[??]. Bagel is still in the development stage where in more features are
+being added to the basic graph computation framework.
 
-Any graph algorithm runs for several iterations and each iteration is called a Superstep.The graph is represented as a distributed dataset of $(K,V)$ pairs.  Here, the keys are vertex IDs, the values are vertex and associated states of the vertices.Every vertex in the graph will be associated with a user specified function.In each superstep, the algorithm runs the function associated with the vertex using the messages recieved from the previous superstep. The output is a new vertex state and a list of all outgoing messages which is then sent to all the other dependent vertices which is then used as input for the next iteration.
+Any graph algorithm runs for several iterations and each iteration is called a
+Superstep. The graph is represented as a distributed dataset of $(K,V)$ pairs.
+Here, the keys are vertex IDs, the values are vertex and associated states of
+the vertices. Every vertex in the graph will be associated with a user specified
+function. In each superstep, the algorithm runs the function associated with the
+vertex using the messages received from the previous superstep. The output is a
+new vertex state and a list of all outgoing messages which is then sent to all
+the other dependent vertices which is then used as input for the next
+iteration.
 
-For the PageRank algorithm, as previously explained the vertices are pages and the edges are links.The list of messages generated at every iteration is the contribution of the PageRank for all its outgoing links.
+For the PageRank algorithm, as previously explained the vertices are pages and
+the edges are links. The list of messages generated at every iteration is the
+contribution of the PageRank for all its outgoing links.
 
-Bagel provides APIs for vertices, edges and messages which could be extended to customize for any algorithm.This enables the user to write any compilcated code within few lines of code.
+Bagel provides APIs for vertices, edges and messages which could be customized
+for any algorithm. This enables the user to write any complicated code with
+only few lines of code.
 
-Further, bagel also provides combiner utility where in a reduction operation is applied on the outgoing message which reduces the communication overhead.The aggregator utility helps in reducing the message across all nodes for all vertices of the graph after every superstep.
+Further, Bagel also provides a combiner utility where in a reduction operation
+it is applied on the outgoing message which reduces the communication overhead.
+The aggregator utility helps in reducing the number of messages across all
+nodes for all vertices of the graph after every superstep.
 
-\emph{Hash Partitioner}:The algorithm makes use of a hash partitioner which is a Controlled data partitioning utility that reduces communication cost.Also, it keeps the information of how data was partitioned across jobs for further reduction of communication cost.
+\emph{Hash Partitioner}: The algorithm makes use of a hash partitioner which is
+a controlled data partitioning utility that reduces communication cost. Also,
+it keeps the information of how data was partitioned across jobs for further
+reduction of communication cost.
 
-\emph{Kyro serialization}: For the bagel program a special form of serialization technique was used, this  serializes the object sent over the network that will be cached in serialized form. The kryo serialization is much faster than the default java serialization used in the spark system as it the communication cost.
+\emph{Kyro serialization}: For the Bagel program a special form of
+serialization technique was used, this serializes the object sent over the
+network that will be cached in serialized form. The Kryo serialization is much
+faster than the default Java serialization used in the Spark system as it adds
+to the communication cost.
 
 \subsection{Results}
 In the first grep test, we examined how Spark scales over a 20GB file using 1
@@ -367,7 +392,7 @@ ranging from 4 to 16 nodes, incrementing by two.  As shown in Figure
 better the scalability is because the ratio of computation to communication is
 large. We had to run on a small dataset because of a technical problem with our
 Spark installation.\footnote{
-\url{https://groups.google.com/forum/#!topic/spark-users/-nsoF7oonOM}}
+\url{https://groups.google.com/forum/#!topic/Spark-users/-nsoF7oonOM}}
 
 \begin{figure}[H]
         \centering
@@ -424,16 +449,16 @@ reason is that Spark replicates the RDD on the go for loss of data.
 
 \begin{figure}[H]
         \centering
-        \includegraphics[width=90mm]{images/bagelsimple.png}
+        \includegraphics[width=90mm]{images/Bagelsimple.png}
         \caption{Bagel VS. Simple PageRank}
-        \label{fig:bagelsimple}
+        \label{fig:Bagelsimple}
     \end{figure}
 
 In order to measure the relative performance of the Bagel and simple
 implementations, we ran both versions of PageRank on
 number of nodes from 4 to 16 with increment 2 and a dataset with 64,000 pages and
 30 million links in total with sufficient memory. In Figure
-\ref{fig:bagelsimple} regardless of time, we can see that bagel version
+\ref{fig:Bagelsimple} regardless of time, we can see that Bagel version
 outperforms simple version a little bit. The main reason is that for a smaller
 dataset, the overhead of managing vertices, edges and messages are so huge that
 the benefits of asynchronous background messages that Spark might offer is not
@@ -487,11 +512,11 @@ to determine a possible solution or workaround.
 
 To sum up, Spark, with its in memory data store, performs great on iterative
 algorithms and degrade linearly with insufficient memory. Using a partitioner,
-the dataset is uniformly distributed across the nodes to avoidance of possible
+the dataset is uniformly distributed across the nodes to avoid the possible
 stragglers. For the scalability test, the time increase with the number of nodes
 is due to the communication overhead for the small dataset. We believe that
 solving the akka error would enable the program to run on larger datasets, and
-show great scalability nodes counts of 10 and under. 
+show great scalability over nodes counts of 10 and under. 
 
 The biggest problem we had throughout these tests was the akka failure. This
 occurs when we ran large dataset on a small number of nodes. This prevented us
@@ -513,7 +538,7 @@ the other two results.
     % easy to install, hard to configure/profile/understand results
     % sporadic runtimes 
 
-% workers and master communication over spark protocol
+% workers and master communication over Spark protocol
 
 \section{Conclusion}
 We found that, while Spark offers an appealing abstraction layer for
