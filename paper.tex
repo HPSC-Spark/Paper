@@ -4,7 +4,7 @@
 \usepackage{float}
 \usepackage{listings}
 
-\title{High-Performance Data Analysis on Janus using Apache Spark}
+\title{High-Performance Data Analysis on JANUS using Apache Spark}
 \author{Nick Vanderweit \\
         Ning Gao \\
         Anitha Ganesha \\
@@ -137,13 +137,13 @@ using an SQL-like syntax.
 
 \section{Evaluation}
 We conducted our evaluation of the Spark system on the University of
-Colorado's Janus supercomputer. Janus consists of 1,368 nodes, each containing
+Colorado's JANUS supercomputer. JANUS consists of 1,368 nodes, each containing
 two six core Intel Xeon Westmere-EP chips at 2.8 GHz, for a total of 12 cores
 per node. Additionally, each core has 2 GB of 1333 MHz DDR RAM, for a total of
 24 GB per node \citep{tufo}. In our research, we employed Spark version
 0.8.0 along with Scala version 2.9.3. During our testing of the Spark system,
-we access input files from Janus' lustre distributed file system. Our aim was
-to assess the Spark runs on Janus and determine optimal configurations to
+we access input files from JANUS' lustre distributed file system. Our aim was
+to assess the Spark runs on JANUS and determine optimal configurations to
 achieve the best performance.
 
 \subsection{Testing}
@@ -168,7 +168,7 @@ command's serial runtime on the same file. Finally, during our first test on the
 node. In Spark, a worker is an executor with it's own JVM which processes it's
 own portion of the distributed data set. By default, a single worker is
 employed on each node. For this test, we wanted to see if this was the ideal
-setting for running Spark on Janus.
+setting for running Spark on JANUS.
 
 % page rank
     % overview
@@ -285,6 +285,14 @@ to determine a possible solution or workaround.
 % workers and master communication over spark protocol
 
 \section{Conclusion}
+We found that, while Spark offers an appealing abstraction layer for
+data-parallel programming, achieving reasonable scalability even on trivial
+problems is still very difficult. Without adequate profiling tools, we found
+ourselves puzzled by the lackluster results of our experiments. With more time,
+we could probably use the Spark logs to better understand where our serial
+bottlenecks are and increase efficiency. It may very well still be worth
+exploring how Spark could be used on JANUS, but it may require rethinking
+how we are using the network and filesystems for this task.
 
 \bibliography{paper}
 \bibliographystyle{plain}
