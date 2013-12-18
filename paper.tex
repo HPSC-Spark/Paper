@@ -340,9 +340,16 @@ We ran both Bagel version and Simple version of PageRank on number of nodes from
         \label{fig:dataskew}
     \end{figure}
 
-At last, we will focus on potential data skew problem, which exists in systems like Hadoop. Since with data skew, the strangler could slow down the whole program considerably.\\
+Finally, we will focus on potential data skew problem, which exists in systems
+like Hadoop. Since with data skew, a straggling worker could slow down the whole
+program considerably.\\
 
-We ran Bagel version of PageRank on four nodes and on dataset of 30 million links. As shown in Figure \ref{fig:dataskew}, the memory used is quite balanced across the nodes. We checked the data size read from the disk and found that all the nodes are reading the exact same amount of data from the disk. So the little imbalance came from the RDDs created later, which is partitioned by a certain key. \\
+We ran the Bagel version of PageRank on four nodes with a dataset of 30 million
+links. As shown in Figure \ref{fig:dataskew}, the memory used is quite balanced
+across the nodes. We used the Spark monitoring logs to confirm that the number
+of bytes read from disk by each node were exactly the same. So the slight skew
+we observed was created later by the RDDs, which are partitioned by a certain
+key. \\
 
 
 % pagerank test 1
