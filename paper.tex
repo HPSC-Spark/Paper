@@ -114,6 +114,27 @@ This kind of optimization is known as \emph{deforestation}, the elimination
 of intermediate data structures, and is used to greatly improve data
 locality \citep{wadler}.
 
+In general, this way of identifying data with its lineage is a very powerful
+way to perform \emph{batch computations} on data, which means applying the same
+transformation over many elements of a distributed data structure. Like
+MapReduce, Spark is not well-suited for applications where each parallel
+tasks requires communication with other threads.
+
+Spark provides APIs for Java, Python, and Scala, although the Scala API seems
+to be the most common. This is likely because of Spark's heavy use of
+higher-order functions on data structures, which is a staple of
+functional programming.
+
+\emph{Bagel} is an implementation of the Google Pregel graph processing framework
+for Spark, which works on a distributed set of $(k, v)$ pairs, where $k$ is
+a vertex ID and $v$ is a vertex with its state. This allows algorithms like
+PageRank to be written simply, and we use this to evaluate Spark's performance
+on iterative algorithms.
+
+Spark also has a Hive-compatible query system called Shark. Though it is beyond
+the scope of this project, Shark allows efficient interactive data querying
+using an SQL-like syntax.
+
 \section{Evaluation}
 We conducted our evaluation of the Spark framework on the University of
 Colorado's Janus supercomputer.  Janus consists of 1,368 nodes, each containing
