@@ -136,45 +136,46 @@ the scope of this project, Shark allows efficient interactive data querying
 using an SQL-like syntax.
 
 \section{Evaluation}
-We conducted our evaluation of the Spark framework on the University of
-Colorado's Janus supercomputer.  Janus consists of 1,368 nodes, each containing
+We conducted our evaluation of the Spark system on the University of
+Colorado's Janus supercomputer. Janus consists of 1,368 nodes, each containing
 two six core Intel Xeon Westmere-EP chips at 2.8 GHz, for a total of 12 cores
-per node.  Additionally, each core has 2 GB of 1333 MHz DDR RAM, for a total of
+per node. Additionally, each core has 2 GB of 1333 MHz DDR RAM, for a total of
 24 GB per node \citep{tufo}. In our research, we employed Spark version
-0.8.0 along with Scala version 2.9.3. During our testing of the Spark framework,
-we access input files from Janus' **lustre distributed file system**. % WHAT ELSE
-Our aim was to assess the Spark on Janus and determine optimal configurations
-to achieve the best performance.
+0.8.0 along with Scala version 2.9.3. During our testing of the Spark system,
+we access input files from Janus' lustre distributed file system. Our aim was
+to assess the Spark runs on Janus and determine optimal configurations to
+achieve the best performance.
 
 \subsection{Testing}
 Following the example from Google's first paper on MapReduce, the first test we
 performed was a parallel grep \citep{dean-mapreduce}. Here an application would
 scan through a large test file, looking for lines that matched a given regular
 expression, finally returning the total number of matched lines. Two series of
-test were run on two different files sizes. We first wanted to see how Spark
-scales in an ideal setting, where the entire data set fits in memory. ***This
-way we avoid the large performance hit Spark takes writing intermediate results
-to disk***.  Given that each node has a total of 24 GB of RAM, we limited our
-first problem size to 20GB. This allowed a single node to contain the entire
-problem in memory, leaving some space for the OS and other supporting
-processes. We executed this first test with 1 to 5 nodes. The second test we
-performed was run with 5 to 50 nodes, each processing a 100GB file.
+tests were run on two different files sizes. During these tests, we wanted to
+see how Spark scales in an ideal setting, where the entire data set fit in
+memory. This way we avoid the large performance hit Spark takes writing
+intermediate results to disk. Given that each node has a total of 24 GB of RAM,
+we limited our first problem size to 20GB. This allowed a single node to
+contain the entire problem in memory, leaving sufficient memory space for the
+OS and other supporting processes. We executed this first test with 1 to 5
+nodes. The second test we performed was run with 5 to 50 nodes, each processing
+a 100GB file.
 
 Ten trials were performed for each test, allows us to compute average
 runtimes. To compute the speedup, Spark runtimes were compared to the UNIX grep
-commands serial runtime on the same file. Finally, during our first test on the
+command's serial runtime on the same file. Finally, during our first test on the
 20 GB file, we evaluated performance using a different number of workers per
-node.  In Spark, a worker is an executor with it's own JVM which processes it's
+node. In Spark, a worker is an executor with it's own JVM which processes it's
 own portion of the distributed data set. By default, a single worker is
 employed on each node. For this test, we wanted to see if this was the ideal
-setting on Janus.
+setting for running Spark on Janus.
 
 % page rank
     % overview
     % ...
 
 \subsection{Results}
-In the first Grep test, we examined how Spark scales over a 20GB file using 1
+In the first grep test, we examined how Spark scales over a 20GB file using 1
 to 5 nodes. Additionally, each trial was executed with a different number
 workers per node. Figure \ref{fig:workNodeTime} shows the average runtimes as
 the number of nodes increases. Each line in this graph represents a different
@@ -192,8 +193,8 @@ produced by 1 to 3 workers is relatively equal.
 Figure \ref{fig:workNodeSpeed} illustrates the results in terms of speedup.
 Here we are comparing the resulting runtimes to the UNIX grep serial runtime of
 1,120 seconds, processing the same 20 GB file. Note that here 1 node represents
-12 cores.  So the initial speedup between 3 and 4 is not as impressive as one
-might expect.  We also see that the speedup begins to level out around 4 nodes,
+12 cores. So the initial speedup between 3 and 4 is not as impressive as one
+might expect. We also see that the speedup begins to level out around 4 nodes,
 and in the case of 1 to 3 workers per node, it even decreases from 4 to 5
 nodes.
 
@@ -218,11 +219,11 @@ starts just under 40\% efficiency. By the time we scale the problem to 5 nodes
     \end{figure}
 
 Finally, Figure \ref{fig:workNodeKF} reflects the Karp-Flatt metric for the
-runtime results. With the exception of the 12 workers per node (pink line), we
-we see that the Karp-Flatt metric remains relatively constant, with values
-between 0.12 and 0.14.  This constraint value would suggest that the large serial
-portion of the application is what is preventing use from seeing better
-scaling.
+runtime results. With the exception of the test using 12 workers per node (pink
+line), we we see that the Karp-Flatt metric remains relatively constant, with
+values between 0.12 and 0.14. This constant value would suggest that the
+large serial portion of the application is what is preventing use from seeing
+better scaling.
 
     \begin{figure}[H]
         \centering
@@ -232,14 +233,13 @@ scaling.
     \end{figure}
 
 To see if we could observe better scaling, we ran the same grep test over a
-100 GB file.  During this test, we also increased the number of nodes used,
-starting with 5 and going to 50 nodes. Given its size, the input text file was
-accessed from the Janus' lustre filesystem. Figure \ref{fig:bigTime} shows the
+100 GB file. During this test, we also increased the number of nodes used,
+starting with 5 and going to 50 nodes. Figure \ref{fig:bigTime} shows the
 runtimes observed over this large problem.  Clearly there appears to be no
 change in runtimes, as the runtimes hover around 500 seconds, regardless of the
 number of nodes used. Suspecting the short computational time of the grep
-search, we began running our tests on the more computationally expensive
-PageRank algorithm.
+search was negligible as compared to the file load time, we began running our
+tests on the more computationally expensive PageRank algorithm.
 
     \begin{figure}[H]
         \centering
@@ -254,24 +254,24 @@ PageRank algorithm.
 
 \section{Discussion}
 The results collected from the initial grep test over the 20 GB file gave us
-some insight on how well such a problem scales in the Spark framework.  Given
-that text file of 20 GB, it appears that employing 3 nodes provides a good
-balance between speedup and efficiency.  We also saw how the number of workers
-per node effects the overall runtime. While 1 to 3 workers yield relatively
-similar results, it seems that using 2 to 3 nodes may give a slight performance
+some insight on how well such a problem scales in the Spark system. Given a
+text file of 20 GB, it appears that employing 3 nodes provides a good balance
+between speedup and efficiency. We also saw how the number of workers per node
+effects the overall runtime. While 1 to 3 workers yield relatively similar
+results, it seems that using 2 to 3 nodes may give a slight performance
 increase. This test would need to be run several more times to achieve more
-more conclusive runtime averages.  It would also be beneficial to increase the
-input file size and node codes, to see if the observed trend continues as the
-problem scales.
+more conclusive runtime averages. It would also be beneficial to increase the
+input file size and node counts, to see if the observed trend continues as the
+problem is scaled up.
 
 In the grep test over the 100 GB file, surprisingly we observed practically no
-change in runtime performance. Perhaps the Karp-Flatt metric results in the
+change in runtime performance. Perhaps the Karp-Flatt metric results seen in the
 previous test gives us some insight as to why this is the case. We suspect the
 long load times on this larger file greatly outweigh any speedup achieved
 through running grep on multiple workers. Given that, we also suspect that
-Spark could be reading this file in serial from the lustre file system. The
+Spark could be reading this file serially from the lustre file system. The
 lack of Spark logging and profiling tools makes it difficult to determine
-exactly how long each stage is takes. But further investigation would be needed
+exactly how long each stage is taking. Further investigation would be needed
 to determine a possible solution or workaround.
 
 % pagerank test 1
