@@ -268,12 +268,30 @@ Spark installation.\footnote{
         \label{fig:in-memory}
     \end{figure}
 
-The main motivation to design Spark is Resilient Distributed Dataset, which resides in memory and stays in memory over the iterations, while Hadoop incurs lots of disk IO because it materializes data like the map output in disk before the data is shuffled. This test is to check whether the time for later iterations is less compared with that in the first iteration.\\
+The main technical insight behind Spark is the Resilient Distributed Dataset,
+which resides in memory and stays in memory over the iterations, while Hadoop
+incurs I/O penalties because it materializes intermediate data (like the map
+output) on disk before the data is shuffled. As such, we ran a test to see
+how total wall clock time changed from one run to the next.
 
+We tested a simple PageRank implementation on a dataset with 1.4 million pages
+and 50 million links in total on 8 nodes and 12 nodes, ensuring that there
+is enough heap space for all of the data to fit into memory. We set
+the number of iterations to be 11. During the first iteration, the program
+needs to load the data from the disk and then process the data. As shown in
+Figure \ref{fig:in-memory} for both the 8-node cluster and 12-node cluster, the
+time spent on the first iteration is much higher than all the latter
+iterations. Note that the time for 12-node cluster is always
+higher than 8-node cluster because the dataset is small and the performance
+gain from distributing the work is less than the communication overhead
+incurred with more nodes. In sum, in-memory dataset does improve the
+performance for iterative algorithms.
 
-We test Simple Pagerank on Dataset with 1.4 million pages and 50 million links in total on 8 nodes and 12 nodes. At the same time, we make sure the data will fit in memory. After that, we set the number of iterations to be 11 and during the first iteration, the program needs to load the data from the disk and then process the data. As shown in Figure \ref{fig:in-memory} for both the 8-node cluster and 12-node cluster, the time spent on the first iteration is much higher than all the latter iterations. One thing to note is that the time for 12-node cluster is always higher than 8-node cluster because the dataset is small and the performance gain from distributing the work is less than the communication overhead incurred with more nodes. In sum, in-memory dataset does improve the performance for iterative algorithms.\\
-
-Spark stores the whole dataset in memory in avoidance of disk IO but when the memory is sufficient, there’s no way to avoid disk IO. Spark has its algorithm to swap the least used data to disk and keeps the most used in memory. This test is to find whether the performance degrades linearly as the memory amount decreases.\\
+Spark often stores the whole dataset in memory in order to avoid disk I/O.
+However, when there is not sufficient memory to do this, disk I/O is
+unavoidable.  As such, Spark has an algorithm algorithm to swap the least-used
+data to disk and keeps the most-used in memory. This test is to find how
+the performance degrades as we restrict the amount of heap space.
 
 
 \begin{figure}[H]
