@@ -176,21 +176,32 @@ setting for running Spark on JANUS.
     % ...
 
 \subsubsection{PageRank}   
-Since Spark system is an in-memory cluster computing system, the power of such a system should be exploited by applications that runs several iterations on the same data. 
-
-As an example of iterative algorithms the \emph{Page Rank} algorithm was chosen.
-The original pagerank algorithm was developed by Google websearch engine which enabled them to rank the webpages in their search engine.
+Since Spark is an in-memory cluster computing system, the power of such
+a system should be exploited by applications that runs several iterations on
+the same data.  One such iterative algorithm we choose to employ was
+\emph{PageRank}.  The original PageRank algorithm was developed by Google which
+enabled them to rank the webpages in their search engine.
 
 \emph{Data set}:
-The source of the dataset is DBPedia, a crowd sourced community that extracts structured information from wikipedia and makes it available on the web. \citep{[??]} There are different formats of wikipedia datasets available online. For our experiments we chose the wikipedia pagelink dataset \citep{[??]} , this contains
-internal links between the DBPedia instances extracted from the internal links of the wikipedia articles making it apt for the any datamining related analysis including Pagerank algorithm. Therefore this dataset was chosen for the experiment.
-The overall size of this dataset is 25GB.
-The format of the data is \{ source url \} \{ some configuration \} \{ dest url \}
-For the pagerank algorithm, only the source url and the dest url is needed.Therefore the dataset was was preprocessed to filter out the only the necessary information.
+We obtained the data used for these tests from DBPedia, a crowd sourced
+community that extracts structured information from Wikipedia and makes it
+available on the web. \citep{[??]} There are different formats of Wikipedia
+datasets available online. For our experiments we chose the Wikipedia pagelink
+dataset \citep{[??]} , this contains internal links between the DBPedia
+instances extracted from the internal links of the Wikipedia articles making it
+apt for the any datamining related analysis including PageRank algorithm.
+Therefore this dataset was chosen for the experiment.  The overall size of this
+dataset is 25GB.  The format of the data is of the form: \\
 
-If the entire dataset is assumed to be represented by a huge graph, then here each DBPedia instance maps to a wikipedia article or a page which inturn could be mapped to a vertex of the graph. And the links between the instances could be mapped to  
-edges of the graph.
+\centering
+\{ source url \} \{ some configuration \} \{ dest url \} \\
 
+For the PageRank algorithm, only the source url and the dest url is
+needed. Therefore the dataset was was preprocessed to filter out only the
+necessary information.  If the entire dataset is assumed to be represented by a
+huge graph, then here each DBPedia instance maps to a Wikipedia article or a
+page which inturn could be mapped to a vertex of the graph. The links
+between the instances could then be mapped to edges of the graph.
 
 \begin{figure}
 \centering
@@ -244,7 +255,7 @@ The Bagel programming model was developed by spark.This is the implementation of
 
 Any graph algorithm runs for several iterations and each iteration is called a Superstep.The graph is represented as a distributed dataset of $(K,V)$ pairs.  Here, the keys are vertex IDs, the values are vertex and associated states of the vertices.Every vertex in the graph will be associated with a user specified function.In each superstep, the algorithm runs the function associated with the vertex using the messages recieved from the previous superstep. The output is a new vertex state and a list of all outgoing messages which is then sent to all the other dependent vertices which is then used as input for the next iteration.
 
-For the pagerank algorithm, as previously explained the vertices are pages and the edges are links.The list of messages generated at every iteration is the contribution of the pagerank for all its outgoing links.
+For the PageRank algorithm, as previously explained the vertices are pages and the edges are links.The list of messages generated at every iteration is the contribution of the PageRank for all its outgoing links.
 
 Bagel provides APIs for vertices, edges and messages which could be extended to customize for any algorithm.This enables the user to write any compilcated code within few lines of code.
 
@@ -334,7 +345,7 @@ measuring the amount of wall clock time each took to compute.
     \begin{figure}[H]
         \centering
         \includegraphics[width=90mm]{images/scalability.png}
-        \caption{Scalability Test for Pagerank}
+        \caption{Scalability Test for PageRank}
         \label{fig:scalability}
     \end{figure}
 
@@ -438,8 +449,8 @@ all the nodes are reading the exact same amount of data from the disk. So the
 little imbalance came from the RDDs created later, which is partitioned by a
 certain key.
 
-% pagerank test 1
-% pagerank test 2
+% PageRank test 1
+% PageRank test 2
 % ...
 
 \section{Discussion}
@@ -484,8 +495,8 @@ despite running with the same exact configuration. To help address this issue,
 we simply discarded any result that appeared to be an outlier as compared to
 the other two results.
 
-% pagerank test 1
-% pagerank test 2
+% PageRank test 1
+% PageRank test 2
 % ...
 
 % other problems exhibited
